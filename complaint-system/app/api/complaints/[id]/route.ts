@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/app/lib/mongodb';
 import Complaint from '@/app/model/complaint.schema';
+import { sendStatusUpdateEmail } from '@/app/lib/email/templates';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -11,6 +12,19 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         
         if (!complaint) {
             return NextResponse.json({ success: false, error: 'Complaint not found' }, { status: 404 });
+        }
+
+        if (body.status && process.env.ADMIN_EMAIL) {
+            try {
+                await sendStatusUpdateEmail({
+                    title: complaint.title,
+                    status: complaint.status,
+                    complaintId: complaint._id.toString(),
+                    updatedAt: new Date().toISOString(),
+                });
+            } catch (emailError) {
+                console.error('Failed to send status update email:', emailError);
+            }
         }
         
         return NextResponse.json({ success: true, data: complaint }, { status: 200 });
