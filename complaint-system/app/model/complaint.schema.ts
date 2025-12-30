@@ -36,7 +36,7 @@ const ComplaintSchema = new Schema<ComplaintDocument>(
 );
 
 const Complaint: Model<ComplaintDocument> =
-  mongoose.models.Complaint ||
+  (mongoose.models.Complaint as Model<ComplaintDocument>) ||
   mongoose.model<ComplaintDocument>('Complaint', ComplaintSchema);
 
 export default Complaint;

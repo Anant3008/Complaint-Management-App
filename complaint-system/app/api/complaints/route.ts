@@ -7,16 +7,22 @@ export async function POST(req: NextRequest) {
     try {
         await connectDB();
         const body = await req.json();
-        const complaint = await Complaint.create(body);
+
+        const complaint = await Complaint.create({
+        title: body.title,
+        description: body.description,
+        category: body.category,
+        priority: body.priority,
+        });
 
         // Send email notification to admin
         if (process.env.ADMIN_EMAIL) {
             try {
                 await sendNewComplaintEmail({
                     title: complaint.title,
-                    category: complaint.category,
-                    priority: complaint.priority,
-                    description: complaint.description,
+                    category: complaint.category ?? 'Not specified',
+                    priority: (complaint.priority ?? 'Low') as 'Low' | 'Medium' | 'High',
+                    description: complaint.description ?? 'No description provided',
                     complaintId: complaint._id.toString(),
                 });
             } catch (emailError) {
