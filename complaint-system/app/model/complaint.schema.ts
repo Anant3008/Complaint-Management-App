@@ -1,26 +1,42 @@
-import mongoose from 'mongoose'
+import mongoose, { Schema, Model, Document } from 'mongoose';
 
-const ComplaintSchema= new mongoose.Schema({
-    title:{
-        type: String,
-        required : true
+export interface ComplaintDocument extends Document {
+  title: string;
+  description?: string;
+  category?: string;
+  priority?: string;
+  status: 'Pending' | 'In Progress' | 'Resolved';
+  dateSubmitted: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const ComplaintSchema = new Schema<ComplaintDocument>(
+  {
+    title: {
+      type: String,
+      required: true,
     },
-    description:{
-        type:String
+    description: {
+      type: String,
     },
-    category:String,
-    priority:String,
-    status:{
-        type: String,
-        enum: ["Pending", "In Progress", "Resolved"],
-        default: "Pending"
+    category: String,
+    priority: String,
+    status: {
+      type: String,
+      enum: ['Pending', 'In Progress', 'Resolved'],
+      default: 'Pending',
     },
     dateSubmitted: {
-        type: Date,
-        default: Date.now
-    }
-},{timestamps:true});
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { timestamps: true }
+);
 
-const Complaint = mongoose.models.Complaint || mongoose.model("Complaint", ComplaintSchema);
+const Complaint: Model<ComplaintDocument> =
+  mongoose.models.Complaint ||
+  mongoose.model<ComplaintDocument>('Complaint', ComplaintSchema);
 
 export default Complaint;
