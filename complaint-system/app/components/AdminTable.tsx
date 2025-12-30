@@ -190,7 +190,15 @@ export default function AdminTable({
                         </td>
                         <td className="px-6 py-4 text-gray-700">{formatted}</td>
                         <td className="px-6 py-4">
-                          <span className={getStatusBadge(c.status)}>{c.status}</span>
+                          <select
+                            value={c.status}
+                            onChange={(e) => onChangeStatus(c._id, e.target.value as Complaint['status'])}
+                            className="px-3 py-1.5 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer"
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                          </select>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2">
